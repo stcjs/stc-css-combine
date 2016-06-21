@@ -1,6 +1,6 @@
-# stc-css-combin
+# stc-css-combine
 
-A module for STC that combines CSS files by resolving import directives.
+A STC module that combines CSS files by resolving import directives. 
 
 ## Install
 
