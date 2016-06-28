@@ -92,10 +92,10 @@ export default class CSSCombinePlugin extends Plugin {
                 return flag;
               }
               else if(levelDiff > 0) {
-                resolvedResPath = resolve('../'.repeat(Math.abs(levelDiff)), resPath);
+                resolvedResPath = resolve('../'.repeat(levelDiff), resPath);
               }
               else if(levelDiff < 0) {
-                resolvedResPath = resolve('x/'.repeat(Math.abs(levelDiff)), resPath);
+                resolvedResPath = resolve('x/'.repeat(-levelDiff), resPath);
               }
 
               token = extend({}, token);
