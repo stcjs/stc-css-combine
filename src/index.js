@@ -89,7 +89,7 @@ export default class CSSCombinePlugin extends Plugin {
               let levelDiff = baseLevel - cssLevel;
 
               if(levelDiff === 0) {
-                return false;
+                return flag;
               }
               else if(levelDiff > 0) {
                 resolvedResPath = resolve('../'.repeat(Math.abs(levelDiff)), resPath);
