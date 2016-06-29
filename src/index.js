@@ -64,6 +64,27 @@ export default class CSSCombinePlugin extends Plugin {
 
     await Promise.all(promises);
 
+    newTokens = this.removeCharset(newTokens);
+
+    return newTokens;
+  }
+
+  removeCharset(tokens) {
+    let charsetToken = null;
+    let newTokens = [];
+
+    tokens.forEach((token, index) => {
+      if(token.type === this.TokenType.CSS_CHARSET) {
+        charsetToken = token;
+      } else {
+        newTokens.push(token);
+      }
+    });
+
+    if(charsetToken) {
+      newTokens.unshift(charsetToken);
+    }
+
     return newTokens;
   }
 
