@@ -49,10 +49,18 @@ export default class CSSCombinePlugin extends Plugin {
 
           return;
         }
-        
-        let cssFile = await this.getFileByPath(cssPath);
-        let tokens = await this.invokeSelf(cssFile);
 
+        try {
+          console.log('1.------------');
+          console.log('current file:', this.file.path);
+          let cssFile = await this.getFileByPath(cssPath);
+          console.log('2.------------');
+          console.log('css file:', cssFile.path);
+          let tokens = await this.invokeSelf(cssFile);
+          console.log('3.------------');
+          console.log('css token:', JSON.stringify(tokens));
+        } catch(e) { console.log(e) }
+ 
         tokens = this.resolvePath(cssFile.path, tokens);
 
         [].push.apply(newTokens, tokens);
@@ -148,7 +156,7 @@ export default class CSSCombinePlugin extends Plugin {
    * use cluster
    */
   static cluster(){
-    return true;
+    return false;
   }
 
   /**
