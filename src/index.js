@@ -20,6 +20,8 @@ const RegInCss = [{
   }
 ];
 
+const MaxRecursionTimes = 20;
+
 export default class CSSCombinePlugin extends Plugin {
   /**
    * run
@@ -27,6 +29,8 @@ export default class CSSCombinePlugin extends Plugin {
   async run(){
     let tokens = await this.getAst();
     let newTokens = [];
+
+    let recursionTimes = this.file.prop('recursionTimes') || 1;
 
     let promises = tokens.map(async (token) => {
       // css import
@@ -37,7 +41,6 @@ export default class CSSCombinePlugin extends Plugin {
         if(!match) {
           this.error(`Can not parse @import in \`${token.value}\``, token.loc.start.line, token.loc.start.column);
           newTokens.push(token);
-
           return;
         }
 
@@ -46,26 +49,25 @@ export default class CSSCombinePlugin extends Plugin {
         // only deal local file
         if(isRemoteUrl(cssPath)) {
           newTokens.push(token);
-
           return;
         }
 
-        try {
-          console.log('1.------------');
-          console.log('current file:', this.file.path);
-          let cssFile = await this.getFileByPath(cssPath);
-          console.log('2.------------');
-          console.log('css file:', cssFile.path);
-          let tokens = await this.invokeSelf(cssFile);
-          console.log('3.------------');
-          console.log('css token:', JSON.stringify(tokens));
-        } catch(e) { console.log(e) }
- 
-        tokens = this.resolvePath(cssFile.path, tokens);
+        // check recursion times
+        if(recursionTimes > MaxRecursionTimes) {
+          this.error(`Recursion more then ${MaxRecursionTimes} times`, token.loc.start.line, token.loc.start.column);
+          return;
+        }
 
-        [].push.apply(newTokens, tokens);
-      }
-      else{
+        let cssFile = await this.getFileByPath(cssPath);
+
+        if(cssFile) {
+          cssFile.prop('recursionTimes', recursionTimes + 1);
+
+          let tokens = await this.invokeSelf(cssFile);
+          tokens = this.resolvePath(cssFile.path, tokens);
+          [].push.apply(newTokens, tokens);
+        }
+      } else {
         newTokens.push(token);
       }
     });
