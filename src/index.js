@@ -1,6 +1,5 @@
 import Plugin from 'stc-plugin';
 import {extend, isRemoteUrl} from 'stc-helper';
-import File from 'stc-file';
 import {resolve} from 'url';
 
 const RegImport = /url\s*\((['"])([\w\-\/\.]+\.css)(?:[^\?\'\"\)\s]*)?\1\)/;
