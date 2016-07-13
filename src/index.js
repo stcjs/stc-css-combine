@@ -38,7 +38,7 @@ export default class CSSCombinePlugin extends Plugin {
 
         // cant not parse @import
         if(!match) {
-          this.error(`Can not parse @import in \`${token.value}\``, token.loc.start.line, token.loc.start.column);
+          this.fatal(`Can not parse @import in \`${token.value}\``, token.loc.start.line, token.loc.start.column);
           newTokens.push(token);
           return;
         }
@@ -53,7 +53,7 @@ export default class CSSCombinePlugin extends Plugin {
 
         // check recursion times
         if(recursionTimes > MaxRecursionTimes) {
-          this.error(`Recursion more then ${MaxRecursionTimes} times`, token.loc.start.line, token.loc.start.column);
+          this.fatal(`Recursion more then ${MaxRecursionTimes} times`, token.loc.start.line, token.loc.start.column);
           return;
         }
 
