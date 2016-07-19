@@ -111,8 +111,6 @@ export default class CSSCombinePlugin extends Plugin {
             if(resPath && !isRemoteUrl(resPath) && /^\.{2}\//.test(resPath)) {
               flag = true;
 
-              console.log(this.file.path, cssPath);
-
               let baseLevel = this.file.path.split('/').length;
               let cssLevel = cssPath.split('/').length;
 
