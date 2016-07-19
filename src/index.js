@@ -31,7 +31,7 @@ export default class CSSCombinePlugin extends Plugin {
 
     let recursionTimes = this.file.prop('recursionTimes') || 1;
 
-    let promises = tokens.map(async (token) => {
+    for(let token of tokens) {
       // css import
       if(token.type === this.TokenType.CSS_IMPORT){
         let match = RegImport.exec(token.value);
@@ -40,7 +40,7 @@ export default class CSSCombinePlugin extends Plugin {
         if(!match) {
           this.fatal(`Can not parse @import in \`${token.value}\``, token.loc.start.line, token.loc.start.column);
           newTokens.push(token);
-          return;
+          continue;
         }
 
         let cssPath = match[2];
@@ -48,13 +48,13 @@ export default class CSSCombinePlugin extends Plugin {
         // only deal local file
         if(isRemoteUrl(cssPath)) {
           newTokens.push(token);
-          return;
+          continue;
         }
 
         // check recursion times
         if(recursionTimes > MaxRecursionTimes) {
           this.fatal(`Recursion more than ${MaxRecursionTimes} times`, token.loc.start.line, token.loc.start.column);
-          return;
+          return [];
         }
 
         let cssFile = await this.getFileByPath(cssPath);
@@ -69,9 +69,7 @@ export default class CSSCombinePlugin extends Plugin {
       } else {
         newTokens.push(token);
       }
-    });
-
-    await Promise.all(promises);
+    }
 
     // if there is charset tokens, keep and pin one.
     newTokens = this.topCharset(newTokens);
@@ -113,11 +111,14 @@ export default class CSSCombinePlugin extends Plugin {
             if(resPath && !isRemoteUrl(resPath) && /^\.{2}\//.test(resPath)) {
               flag = true;
 
+              console.log(this.file.path, cssPath);
+
               let baseLevel = this.file.path.split('/').length;
               let cssLevel = cssPath.split('/').length;
 
               let resolvedResPath;
               let levelDiff = baseLevel - cssLevel;
+
 
               if(levelDiff === 0) {
                 return flag;
@@ -131,6 +132,7 @@ export default class CSSCombinePlugin extends Plugin {
 
               token = extend({}, token);
               token.value = token.value.replace(resPath, resolvedResPath);
+              token.ext.value = token.value;
             }
 
             return flag;
