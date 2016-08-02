@@ -152,7 +152,12 @@ export default class CSSCombinePlugin extends Plugin {
 
     return tokens;
   }
-
+  /**
+   * default include
+   */
+  static include(){
+    return /\.css$/;
+  }
   /**
    * use cluster
    */
