@@ -8,7 +8,7 @@ import {
 
 import {resolve} from 'url';
 
-const RegImport = /url\s*\((['"]?)([\w\-\/\.]+\.css)(?:[^\?\'\"\)\s]*)?\1\)/;
+const RegImport = /@import\s+url\s*\(\s*(?:[\'\"]?)([\w\/_\.\:\-]+\.css)(?:\?[^\'\"\)]*)?(?:[\'\"]?)\s*\)\s*[;]?/;
 
 const RegInCss = [
   ResourceRegExp.background,
@@ -30,7 +30,7 @@ export default class CSSCombinePlugin extends Plugin {
 
     for(let token of tokens) {
       // css import
-      if(token.type === this.TokenType.CSS_IMPORT){
+      if(token.type === this.TokenType.CSS_IMPORT) {
         let match = RegImport.exec(token.value);
 
         // cant not parse @import
@@ -40,7 +40,7 @@ export default class CSSCombinePlugin extends Plugin {
           continue;
         }
 
-        let cssPath = match[2];
+        let cssPath = match[1];
 
         // only deal local file
         if(isRemoteUrl(cssPath)) {
@@ -98,11 +98,12 @@ export default class CSSCombinePlugin extends Plugin {
 
     tokens.forEach(token => {
       // css value
-      if(token.type === this.TokenType.CSS_VALUE){
+      if(token.type === this.TokenType.CSS_VALUE) {
         RegInCss.some(item => {
           let flag = false;
-          token.ext.value.replace(item.regexp, (...args) => {
-            let resPath = args[item.index];
+
+          token.ext.value.replace(item, (...args) => {
+            let resPath = args[2];
 
             // only resolve relative path
             if(resPath && !isRemoteUrl(resPath) && /^\.{2}\//.test(resPath)) {
@@ -113,7 +114,6 @@ export default class CSSCombinePlugin extends Plugin {
 
               let resolvedResPath;
               let levelDiff = baseLevel - cssLevel;
-
 
               if(levelDiff === 0) {
                 return flag;
