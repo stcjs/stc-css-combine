@@ -8,7 +8,7 @@ import {
 
 import {resolve} from 'url';
 
-const RegImport = /url\s*\((['"])([\w\-\/\.]+\.css)(?:[^\?\'\"\)\s]*)?\1\)/;
+const RegImport = /url\s*\((['"]?)([\w\-\/\.]+\.css)(?:[^\?\'\"\)\s]*)?\1\)/;
 
 const RegInCss = [
   ResourceRegExp.background,
