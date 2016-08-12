@@ -1,22 +1,19 @@
 import Plugin from 'stc-plugin';
-import {extend, isRemoteUrl} from 'stc-helper';
+
+import {
+  extend, 
+  isRemoteUrl,
+  ResourceRegExp
+} from 'stc-helper';
+
 import {resolve} from 'url';
 
 const RegImport = /url\s*\((['"])([\w\-\/\.]+\.css)(?:[^\?\'\"\)\s]*)?\1\)/;
 
-const RegInCss = [{
-    // background image
-    regexp: /url\s*\(\s*([\'\"]?)([\w\-\/\.\@]+\.(?:png|jpg|gif|jpeg|ico|cur|webp))(?:\?[^\?\'\"\)\s]*)?\1\s*\)/i,
-    index: 2
-  }, {
-    // font
-    regexp: /url\s*\(\s*([\'\"]?)([^\'\"\?]+\.(?:eot|woff|woff2|ttf|svg))([^\s\)\'\"]*)\1\s*\)/ig,
-    index: 2
-  }, {
-    // ie filter
-    regexp: /src\s*=\s*([\'\"])?([^\'\"]+\.(?:png|jpg|gif|jpeg|ico|cur|webp))(?:\?[^\?\'\"\)\s]*)?\1\s*/i,
-    index: 2
-  }
+const RegInCss = [
+  ResourceRegExp.background,
+  ResourceRegExp.font,
+  ResourceRegExp.filter
 ];
 
 const MaxRecursionTimes = 20;
