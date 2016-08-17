@@ -166,6 +166,6 @@ export default class CSSCombinePlugin extends Plugin {
    * use cache
    */
   static cache(){
-    return true;
+    return false;
   }
 }
